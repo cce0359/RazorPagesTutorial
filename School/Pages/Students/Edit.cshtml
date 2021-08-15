@@ -1,0 +1,116 @@
+﻿@page
+@model School.Pages.Students.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Student</h4>
+<hr />
+<form method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Student.ID" />
+            <div class="form-group">
+                <label asp-for="Student.LastName" class="control-label"></label>
+                <input asp-for="Student.LastName" class="form-control" />
+                <span asp-validation-for="Student.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Student.FirstMidName" class="control-label"></label>
+                <input asp-for="Student.FirstMidName" class="form-control" />
+                <span asp-validation-for="Student.FirstMidName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Student.EnrollmentDate" class="control-label"></label>
+                <input asp-for="Student.EnrollmentDate" class="form-control" />
+                <span asp-validation-for="Student.EnrollmentDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>Course Number</th>
+                    <th>Course Title</th>
+                    <th>Grade</th>
+                </tr>
+                @foreach (var item in Model.Student.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" asp-for="@item.Course.CourseID" name="courseid" />
+                            @Html.DisplayFor(modelItem => item.Course.CourseID)
+                        </td>
+                        <td>
+                            <input type="hidden" asp-for="@item.Course.Title" name="title" />
+                            @Html.DisplayFor(modelItem => item.Course.Title)
+                        </td>
+                        <td>
+                            @*asp-items="Html.GetEnumSelectList<Models.Grade>()"*@
+                            <div class="form-group">
+                                <select asp-for="@item.Grade" class="form-control"
+                                        name="grades">
+                                    <option>No grade</option>
+                                    <option>A</option>
+                                    <option>B</option>
+                                    <option>C</option>
+                                    <option>D</option>
+                                    <option>F</option>
+                                </select>
+                                <span asp-validation-for="@item.Grade" class="text-danger"></span>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+
+        <div class="form-group">
+            <div class="table">
+                <table>
+                    <tr>
+                        @{
+                            int cnt = 0;
+
+                            foreach (var course in Model.AssignedCourseDataList)
+                            {
+                                if (cnt++ % 3 == 0)
+                                {
+                                @:</tr><tr>
+                                }
+                                @:<td>
+                                    <input type="checkbox"
+                                           name="selectedCourses"
+                                           value="@course.CourseID"
+                                           @(Html.Raw(course.Assigned ? "checked=\"checked\"" : "")) />
+                                    @course.CourseID @:  @course.Title
+                                @:</td>
+                            }
+                        @:</tr>
+                        }
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
